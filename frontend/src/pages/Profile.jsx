@@ -1,94 +1,101 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../services/axiosInstance";
 import toast from "react-hot-toast";
 import "./pages_sty.css";
 
-function Profile() {
-  const [user, setUser] = useState(null);
-  const [name, setName] = useState("");
+function Register() {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
-  const fetchProfile = async () => {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (loading) return; // Prevent double click
+
+    setLoading(true);
+
     try {
-      const res = await axiosInstance.get("/auth/me");
-      setUser(res.data);
-      setName(res.data.name);
+      await axiosInstance.post("/auth/register", form);
+
+      toast.success("Registration successful!");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+
     } catch (error) {
-      toast.error("Failed to load profile");
-      console.log(error);
+      toast.error(
+        error.response?.data?.error || "Registration failed"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // const updateProfile = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const res = await axiosInstance.put("/users/me", { name });
-  //     setUser(res.data);
-  //     toast.success("Profile updated");
-  //     setTimeout(() => {
-  //       window.location.reload();
-  //     }, 1500);
-  //   } catch (error) {
-  //     toast.error("Failed to update profile");
-  //     console.log(error);
-  //   }
-  // };
-
-  const updateProfile = async (e) => {
-  e.preventDefault();
-
-  try {
-    const res = await axiosInstance.put("/users/me", {
-      name
-    });
-
-    console.log("Response:", res.data);
-
-    setUser(res.data);
-    setName(res.data.name);
-
-    toast.success("Profile updated!");
-
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to update profile");
-  }
-};
-
-
-  if (!user) {
-    return <h2>Loading...</h2>;
-  }
-
   return (
-    <div className="profile-container">
-      <h1 className="main-heading">Profile</h1>
+    <form className="register-form" onSubmit={handleSubmit}>
+      <h2 className="main-heading">Register</h2>
 
-      <div className="profile-info">
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Member Since:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-      </div>
+      <input
+        name="name"
+        placeholder="Name"
+        onChange={handleChange}
+        className="register-input"
+        required
+        disabled={loading}
+      />
 
-      <hr />
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+        onChange={handleChange}
+        className="register-input"
+        required
+        disabled={loading}
+      />
 
-      <form className="profile-form" onSubmit={updateProfile}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="profile-input"
-        />
-        <button className="update-btn" type="submit">
-          Update Name
-        </button>
-      </form>
-    </div>
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        className="register-input"
+        required
+        disabled={loading}
+      />
+
+      <button
+  type="submit"
+  className="btn"
+  disabled={loading}
+>
+  {loading ? (
+    <>
+      <span className="spinner"></span>
+      Registering...
+    </>
+  ) : (
+    "Register"
+  )}
+</button>
+    </form>
   );
 }
 
-export default Profile;
+export default Register;
