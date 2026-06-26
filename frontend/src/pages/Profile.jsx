@@ -22,20 +22,42 @@ function Profile() {
     }
   };
 
+  // const updateProfile = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await axiosInstance.put("/users/me", { name });
+  //     setUser(res.data);
+  //     toast.success("Profile updated");
+  //     setTimeout(() => {
+  //       window.location.reload();
+  //     }, 1500);
+  //   } catch (error) {
+  //     toast.error("Failed to update profile");
+  //     console.log(error);
+  //   }
+  // };
+
   const updateProfile = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axiosInstance.put("/users/me", { name });
-      setUser(res.data);
-      toast.success("Profile updated");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-    } catch (error) {
-      toast.error("Failed to update profile");
-      console.log(error);
-    }
-  };
+  e.preventDefault();
+
+  try {
+    const res = await axiosInstance.put("/users/me", {
+      name
+    });
+
+    console.log("Response:", res.data);
+
+    setUser(res.data);
+    setName(res.data.name);
+
+    toast.success("Profile updated!");
+
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to update profile");
+  }
+};
+
 
   if (!user) {
     return <h2>Loading...</h2>;
