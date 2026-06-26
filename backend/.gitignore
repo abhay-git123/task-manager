@@ -1,0 +1,9 @@
+node_modules
+.env
+
+node_modules
+.env
+
+task-manager-frontend/node_modules
+task-manager-frontend/dist
+task-manager-frontend/.env
