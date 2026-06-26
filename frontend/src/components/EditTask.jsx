@@ -1,18 +1,13 @@
 import { useState } from "react";
 
-function EditTask({
-  task,
-  onSave,
-  onClose
-}) {
 
+function EditTask({ task, onSave, onClose }) {
   const [form, setForm] = useState(task);
 
   const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.name]:
-        e.target.value
+      [e.target.name]: e.target.value
     });
   };
 
@@ -22,73 +17,63 @@ function EditTask({
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "20%",
-        left: "35%",
-        background: "white",
-        border: "1px solid black",
-        padding: "20px"
-      }}
-    >
-      <h2>Edit Task</h2>
+    <div className="edit-task-overlay">
+      <div className="edit-task-card">
+        <h2 className="form-heading">Edit Task</h2>
 
-      <form onSubmit={handleSubmit}>
+        <form className="edit-task-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Title</label>
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              className="form-input"
+              required
+            />
+          </div>
 
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-        />
+          <div className="form-group">
+            <label className="form-label">Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              className="form-textarea"
+            />
+          </div>
 
-        <br />
+          <div className="form-group">
+            <label className="form-label">Priority</label>
+            <select
+              name="priority"
+              value={form.priority}
+              onChange={handleChange}
+              className="form-select"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
 
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-        />
+          <div className="form-group">
+            <label className="form-label">Due Date</label>
+            <input
+              type="date"
+              name="dueDate"
+              value={form.dueDate ? form.dueDate.substring(0, 10) : ""}
+              onChange={handleChange}
+              className="form-input"
+            />
+          </div>
 
-        <br />
-        <select
-  name="priority"
-  value={form.priority}
-  onChange={handleChange}
->
-  <option value="low">Low</option>
-  <option value="medium">Medium</option>
-  <option value="high">High</option>
-</select>
-
-<br />
-
-<input
-  type="date"
-  name="dueDate"
-  value={
-    form.dueDate
-      ? form.dueDate.substring(0, 10)
-      : ""
-  }
-  onChange={handleChange}
-/>
-
-<br />
-
-        <button className="save-btn" type="submit">
-          Save
-        </button>
-
-        <button className="cancel-btn"
-          type="button"
-          onClick={onClose}
-        >
-          Cancel
-        </button>
-
-      </form>
-
+          <div className="form-actions">
+            <button className="save-btn" type="submit">Save</button>
+            <button className="cancel-btn" type="button" onClick={onClose}>Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
